@@ -1,0 +1,119 @@
+---
+title: "Multi-Factor Authentication"
+description: "Add an extra layer of security to your Plumi account with MFA"
+---
+
+## Overview
+
+Multi-Factor Authentication (MFA) adds an extra layer of security to your Plumi account. When enabled, you'll need both your password and a time-based code from an authenticator app to sign in.
+
+## Supported Authenticator Apps
+
+Plumi MFA works with any TOTP-compatible authenticator app:
+
+- **Google Authenticator** (iOS, Android)
+- **Microsoft Authenticator** (iOS, Android)
+- **Authy** (iOS, Android, Desktop)
+- **1Password** (iOS, Android, Desktop)
+- **Bitwarden** (iOS, Android, Desktop)
+
+## Enabling MFA
+
+<Steps>
+  <Step title="Go to Settings">
+    Navigate to **Settings** from the sidebar.
+  </Step>
+  <Step title="Find MFA Section">
+    Scroll to the **Two-Factor Authentication (MFA)** section.
+  </Step>
+  <Step title="Click Enable MFA">
+    Click the **Enable MFA** button to start the setup process.
+  </Step>
+  <Step title="Scan QR Code">
+    Open your authenticator app and scan the QR code displayed on screen.
+
+    Alternatively, you can manually enter the secret key shown below the QR code.
+  </Step>
+  <Step title="Enter Verification Code">
+    Enter the 6-digit code from your authenticator app to verify the setup.
+  </Step>
+  <Step title="Save Backup Codes">
+    **Important**: Save your backup codes in a secure location. You'll need these if you lose access to your authenticator app.
+  </Step>
+</Steps>
+
+<Warning>
+Store your backup codes securely. Each backup code can only be used once.
+</Warning>
+
+## Signing In with MFA
+
+When MFA is enabled, the sign-in process includes an extra step:
+
+1. Enter your email and password as usual
+2. On the MFA challenge screen, enter the 6-digit code from your authenticator app
+3. Click **Verify** to complete sign-in
+
+<Tip>
+The 6-digit code refreshes every 30 seconds. If your code isn't working, wait for the next code.
+</Tip>
+
+## Using Backup Codes
+
+If you lose access to your authenticator app:
+
+1. On the MFA challenge screen, click **Use a backup code**
+2. Enter one of your 8-character backup codes (format: `XXXX-XXXX`)
+3. Click **Verify** to sign in
+
+<Warning>
+Each backup code can only be used once. After using a backup code, set up your authenticator app again or generate new backup codes.
+</Warning>
+
+## Disabling MFA
+
+To disable MFA:
+
+1. Go to **Settings**
+2. In the MFA section, click **Disable MFA**
+3. Enter the 6-digit code from your authenticator app to confirm
+4. Click **Disable MFA** to complete
+
+<Info>
+Disabling MFA removes the extra security layer from your account. Consider keeping MFA enabled for better protection.
+</Info>
+
+## Troubleshooting
+
+### Code not working
+
+- Ensure your device's time is synchronized correctly
+- Wait for the next 6-digit code (codes refresh every 30 seconds)
+- Make sure you're using the correct account in your authenticator app
+
+### Lost authenticator app access
+
+1. Use one of your backup codes to sign in
+2. Go to Settings and disable MFA
+3. Re-enable MFA with your new device
+
+### No backup codes available
+
+Contact your administrator for assistance. They may be able to reset your MFA settings.
+
+## Best Practices
+
+<CardGroup cols={2}>
+  <Card title="Save Backup Codes" icon="key">
+    Store backup codes in a secure password manager or offline location.
+  </Card>
+  <Card title="Keep App Updated" icon="rotate">
+    Keep your authenticator app updated for security fixes.
+  </Card>
+  <Card title="Secure Your Phone" icon="mobile">
+    Use a PIN or biometric lock on your mobile device.
+  </Card>
+  <Card title="Multiple Devices" icon="devices">
+    Some apps like Authy allow syncing across multiple devices.
+  </Card>
+</CardGroup>

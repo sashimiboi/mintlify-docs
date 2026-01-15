@@ -47,6 +47,12 @@
             "pages": [
               "integrations/mcp"
             ]
+          },
+          {
+            "group": "Security",
+            "pages": [
+              "security/mfa"
+            ]
           }
         ]
       },
