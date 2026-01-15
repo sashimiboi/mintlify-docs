@@ -25,7 +25,9 @@
             "pages": [
               "features/query-engine",
               "features/ai-engine",
-              "features/analytics"
+              "features/analytics",
+              "features/mcp-studio",
+              "features/governance"
             ]
           },
           {

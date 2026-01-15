@@ -1,0 +1,149 @@
+---
+title: "MCP Studio"
+description: "Build, test, and manage MCP tools for AI assistant integrations"
+---
+
+## Overview
+
+MCP Studio is your integrated development environment for creating Model Context Protocol (MCP) tools. Build custom tools that let AI assistants interact with your data and systems.
+
+## Features
+
+MCP Studio includes four main areas:
+
+<CardGroup cols={2}>
+  <Card title="Tool Builder" icon="wrench">
+    Create and configure MCP tools with a visual editor.
+  </Card>
+  <Card title="Testing Playground" icon="flask">
+    Test your tools before deploying to production.
+  </Card>
+  <Card title="Versions" icon="code-branch">
+    Manage tool versions and rollbacks.
+  </Card>
+  <Card title="Git Integration" icon="git-alt">
+    Connect to GitHub for version control.
+  </Card>
+</CardGroup>
+
+## Tool Builder
+
+The Tool Builder provides a visual interface for creating MCP tools:
+
+### Creating a Tool
+
+1. Navigate to **MCP Studio > Tool Builder**
+2. Click **New Tool**
+3. Define tool properties:
+   - **Name**: Unique identifier for the tool
+   - **Description**: What the tool does (shown to AI)
+   - **Parameters**: Input parameters the tool accepts
+   - **SQL Query**: The query to execute
+
+### Tool Parameters
+
+Define parameters that AI assistants can pass to your tool:
+
+```json
+{
+  "name": "customer_id",
+  "type": "string",
+  "description": "The unique customer identifier",
+  "required": true
+}
+```
+
+### Example Tool
+
+```yaml
+name: get_customer_orders
+description: Retrieve orders for a specific customer
+parameters:
+  - name: customer_id
+    type: string
+    required: true
+  - name: limit
+    type: integer
+    default: 10
+query: |
+  SELECT * FROM orders
+  WHERE customer_id = {{customer_id}}
+  LIMIT {{limit}}
+```
+
+## Testing Playground
+
+Test your tools before deploying:
+
+1. Go to **MCP Studio > Testing Playground**
+2. Select the tool to test
+3. Enter parameter values
+4. Click **Run** to execute
+5. Review the results
+
+<Tip>
+Test with edge cases and invalid inputs to ensure your tools handle errors gracefully.
+</Tip>
+
+## Version Management
+
+### Creating Versions
+
+1. Go to **MCP Studio > Versions**
+2. Click **Create Version**
+3. Add a version name and description
+4. Select which tools to include
+
+### Rolling Back
+
+If a new version has issues:
+1. Go to **Versions**
+2. Find the previous stable version
+3. Click **Rollback** to restore it
+
+## Git Integration
+
+Connect your MCP tools to GitHub for version control:
+
+### Connecting GitHub
+
+1. Go to **MCP Studio > Git**
+2. Click **Connect GitHub**
+3. Authorize Plumi to access your repositories
+4. Select or create a repository for your tools
+
+### Syncing Tools
+
+- **Push**: Save your tools to GitHub
+- **Pull**: Load tools from GitHub
+- **Commit History**: View changes over time
+
+## Best Practices
+
+<Tip>
+**Write clear descriptions**: AI assistants use tool descriptions to decide when to use each tool.
+</Tip>
+
+<Tip>
+**Validate inputs**: Add parameter validation to prevent SQL injection and invalid queries.
+</Tip>
+
+<Tip>
+**Test thoroughly**: Use the playground to test all parameter combinations before deploying.
+</Tip>
+
+## Using Your Tools
+
+Once published, your tools are available via MCP:
+
+```json
+{
+  "mcpServers": {
+    "plumi": {
+      "url": "https://your-workspace.plumi.ai/sse?api_key=YOUR_KEY"
+    }
+  }
+}
+```
+
+AI assistants can then use your custom tools alongside built-in Plumi tools.
