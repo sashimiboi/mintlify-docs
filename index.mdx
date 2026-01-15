@@ -1,97 +1,71 @@
 ---
-title: "Introduction"
-description: "Welcome to the new home for your documentation"
+title: "Welcome to Plumi"
+description: "AI-powered data analytics platform that connects to your databases and delivers insights through natural language"
 ---
 
-## Setting up
+## What is Plumi?
 
-Get your documentation site up and running in minutes.
+Plumi is an AI-powered data analytics platform that transforms how teams interact with their data. Connect your databases, ask questions in natural language, and get instant insights with automatically generated SQL queries and visualizations.
 
 <Card
-  title="Start here"
+  title="Get Started"
   icon="rocket"
   href="/quickstart"
   horizontal
 >
-  Follow our three step quickstart guide.
+  Set up your first data connection in minutes.
 </Card>
 
-## Make it yours
-
-Design a docs site that looks great and empowers your users.
+## Core Capabilities
 
 <Columns cols={2}>
   <Card
-    title="Edit locally"
-    icon="pen-to-square"
-    href="/development"
+    title="Query Engine"
+    icon="database"
+    href="/features/query-engine"
   >
-    Edit your docs locally and preview them in real time.
+    Write and execute SQL queries with AI assistance. Get intelligent suggestions and automatic query optimization.
   </Card>
   <Card
-    title="Customize your site"
-    icon="palette"
-    href="/essentials/settings"
+    title="AI Engine"
+    icon="brain"
+    href="/features/ai-engine"
   >
-    Customize the design and colors of your site to match your brand.
-  </Card>
-    <Card
-    title="Set up navigation"
-    icon="map"
-    href="/essentials/navigation"
-  >
-    Organize your docs to help users find what they need and succeed with your product.
+    Ask questions in natural language and let AI generate the SQL for you. Supports multiple AI models.
   </Card>
   <Card
-    title="API documentation"
-    icon="terminal"
-    href="/api-reference/introduction"
+    title="Analytics"
+    icon="chart-line"
+    href="/features/analytics"
   >
-    Auto-generate API documentation from OpenAPI specifications.
+    Build interactive dashboards with drag-and-drop widgets. Visualize your data with charts, tables, and metrics.
+  </Card>
+  <Card
+    title="MCP Integration"
+    icon="plug"
+    href="/integrations/mcp"
+  >
+    Connect Plumi to AI assistants like Claude using Model Context Protocol (MCP).
   </Card>
 </Columns>
 
-## Create beautiful pages
+## Supported Data Sources
 
-Everything you need to create world-class documentation.
+Plumi connects to all major databases and data warehouses:
 
-<Columns cols={2}>
-  <Card
-    title="Write with MDX"
-    icon="pen-fancy"
-    href="/essentials/markdown"
-  >
-    Use MDX to style your docs pages.
-  </Card>
-  <Card
-    title="Code samples"
-    icon="code"
-    href="/essentials/code"
-  >
-    Add sample code to demonstrate how to use your product.
-  </Card>
-  <Card
-    title="Images"
-    icon="image"
-    href="/essentials/images"
-  >
-    Display images and other media.
-  </Card>
-  <Card
-    title="Reusable snippets"
-    icon="recycle"
-    href="/essentials/reusable-snippets"
-  >
-    Write once and reuse across your docs.
-  </Card>
+<Columns cols={3}>
+  <Card title="PostgreSQL" icon="database" href="/connectors/postgresql" />
+  <Card title="MySQL" icon="database" href="/connectors/mysql" />
+  <Card title="ClickHouse" icon="database" href="/connectors/clickhouse" />
+  <Card title="BigQuery" icon="cloud" href="/connectors/bigquery" />
+  <Card title="Snowflake" icon="snowflake" href="/connectors/snowflake" />
+  <Card title="MongoDB" icon="leaf" href="/connectors/mongodb" />
 </Columns>
 
-## Need inspiration?
+## Why Plumi?
 
-<Card
-  title="See complete examples"
-  icon="stars"
-  href="https://mintlify.com/customers"
->
-  Browse our showcase of exceptional documentation sites.
-</Card>
+- **Natural Language Queries**: Ask questions in plain English and get accurate SQL
+- **Multi-Database Support**: Connect to PostgreSQL, MySQL, ClickHouse, BigQuery, Snowflake, and MongoDB
+- **AI Model Flexibility**: Choose from Claude, GPT-4, Gemini, or Mistral
+- **MCP Integration**: Use your data directly in AI assistants
+- **Secure by Design**: Your data stays in your infrastructure

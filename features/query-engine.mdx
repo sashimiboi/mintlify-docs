@@ -1,0 +1,78 @@
+---
+title: "Query Engine"
+description: "Write, execute, and optimize SQL queries with AI assistance"
+---
+
+## Overview
+
+The Query Engine is your central hub for interacting with databases. Write SQL queries, explore schemas, and visualize results all in one place.
+
+## Features
+
+### SQL Editor
+
+A powerful code editor with:
+- **Syntax highlighting** for SQL
+- **Auto-completion** for tables, columns, and functions
+- **Schema explorer** to browse your database structure
+- **Query history** to revisit previous queries
+
+### Query Execution
+
+- Execute queries against any connected database
+- View results in a responsive data grid
+- Export results to CSV or JSON
+- Pin frequently used queries
+
+### Schema Explorer
+
+Browse your database schema:
+- View all tables and columns
+- See column types and constraints
+- Preview sample data from tables
+- Search across your schema
+
+## Using the Query Engine
+
+### Writing Queries
+
+1. Select your database from the dropdown
+2. Write your SQL in the editor
+3. Press `Cmd/Ctrl + Enter` to execute
+4. View results in the grid below
+
+```sql
+SELECT
+  customer_name,
+  SUM(order_total) as total_revenue
+FROM orders
+JOIN customers ON orders.customer_id = customers.id
+WHERE order_date >= '2024-01-01'
+GROUP BY customer_name
+ORDER BY total_revenue DESC
+LIMIT 10;
+```
+
+### Keyboard Shortcuts
+
+| Shortcut | Action |
+|----------|--------|
+| `Cmd/Ctrl + Enter` | Execute query |
+| `Cmd/Ctrl + S` | Save query |
+| `Cmd/Ctrl + /` | Toggle comment |
+| `Cmd/Ctrl + D` | Select next occurrence |
+
+## AI Assistance
+
+The Query Engine integrates with the AI Engine to help you:
+- Get suggestions for query optimization
+- Explain complex queries
+- Generate queries from natural language
+
+<Card
+  title="Try the AI Engine"
+  icon="brain"
+  href="/features/ai-engine"
+>
+  Let AI write your SQL queries for you.
+</Card>

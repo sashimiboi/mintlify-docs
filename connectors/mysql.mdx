@@ -1,0 +1,75 @@
+---
+title: "MySQL"
+description: "Connect to MySQL and MariaDB databases"
+---
+
+## Overview
+
+Connect Plumi to MySQL databases, including:
+- Self-hosted MySQL
+- Amazon RDS for MySQL
+- Azure Database for MySQL
+- Google Cloud SQL for MySQL
+- PlanetScale
+- MariaDB
+
+## Connection Details
+
+| Field | Description | Example |
+|-------|-------------|---------|
+| Host | Database server address | `db.example.com` |
+| Port | MySQL port (default: 3306) | `3306` |
+| Database | Database name | `myapp_production` |
+| Username | Database user | `plumi_readonly` |
+| Password | User password | `********` |
+| SSL | Enable SSL connection | `true` |
+
+## Setting Up a Read-Only User
+
+Create a dedicated read-only user for Plumi:
+
+```sql
+-- Create user
+CREATE USER 'plumi_readonly'@'%' IDENTIFIED BY 'your_secure_password';
+
+-- Grant select permission on all tables
+GRANT SELECT ON your_database.* TO 'plumi_readonly'@'%';
+
+-- Apply changes
+FLUSH PRIVILEGES;
+```
+
+## Cloud Provider Setup
+
+### Amazon RDS
+
+1. Ensure your RDS instance allows remote connections
+2. Add Plumi's IP to your security group
+3. Use the RDS endpoint as the host
+
+### Azure Database
+
+1. Add firewall rules for Plumi's IP
+2. Use the server name as host (e.g., `yourserver.mysql.database.azure.com`)
+3. Username format: `username@servername`
+
+### PlanetScale
+
+1. Create a new branch or use your main branch
+2. Generate connection credentials from the dashboard
+3. Use the provided host, username, and password
+
+## Troubleshooting
+
+### "Host is not allowed to connect"
+
+The MySQL user isn't allowed to connect from remote hosts. Update the user's host:
+
+```sql
+UPDATE mysql.user SET Host='%' WHERE User='plumi_readonly';
+FLUSH PRIVILEGES;
+```
+
+### "Access denied"
+
+Verify the username and password are correct, and the user has SELECT permissions on the database.

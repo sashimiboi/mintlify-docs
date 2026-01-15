@@ -1,0 +1,90 @@
+---
+title: "BigQuery"
+description: "Connect to Google BigQuery data warehouse"
+---
+
+## Overview
+
+Connect Plumi to Google BigQuery for serverless, highly-scalable data warehouse analytics.
+
+## Connection Details
+
+| Field | Description |
+|-------|-------------|
+| Project ID | Your Google Cloud project ID |
+| Dataset | Default dataset (optional) |
+| Service Account | JSON key file contents |
+
+## Setting Up Service Account
+
+1. Go to [Google Cloud Console](https://console.cloud.google.com)
+2. Navigate to **IAM & Admin > Service Accounts**
+3. Click **Create Service Account**
+4. Give it a name like `plumi-bigquery-reader`
+5. Grant the **BigQuery Data Viewer** role
+6. Create a JSON key and download it
+
+### Required Permissions
+
+The service account needs these roles:
+- `roles/bigquery.dataViewer` - Read data from tables
+- `roles/bigquery.jobUser` - Run queries
+
+```bash
+# Grant roles via gcloud
+gcloud projects add-iam-policy-binding YOUR_PROJECT \
+  --member="serviceAccount:plumi@YOUR_PROJECT.iam.gserviceaccount.com" \
+  --role="roles/bigquery.dataViewer"
+
+gcloud projects add-iam-policy-binding YOUR_PROJECT \
+  --member="serviceAccount:plumi@YOUR_PROJECT.iam.gserviceaccount.com" \
+  --role="roles/bigquery.jobUser"
+```
+
+## Adding to Plumi
+
+1. Go to **Data Connectors**
+2. Select **BigQuery**
+3. Enter your Project ID
+4. Paste the service account JSON key
+5. Test and save
+
+## Query Syntax
+
+BigQuery uses Standard SQL with some extensions:
+
+```sql
+-- Date functions
+SELECT
+  DATE_TRUNC(order_date, MONTH) as month,
+  SUM(total) as revenue
+FROM `project.dataset.orders`
+WHERE order_date >= '2024-01-01'
+GROUP BY month;
+
+-- Array handling
+SELECT
+  user_id,
+  ARRAY_AGG(product_name) as products
+FROM `project.dataset.orders`
+GROUP BY user_id;
+```
+
+## Cost Optimization
+
+BigQuery charges by data scanned. To minimize costs:
+
+- Select only needed columns (avoid `SELECT *`)
+- Use partitioned tables and filter by partition column
+- Use `LIMIT` when exploring data
+- Consider using clustered tables
+
+## Troubleshooting
+
+### "Access Denied: Project not found"
+
+Verify the project ID is correct and the service account belongs to that project.
+
+### "Access Denied: Dataset not found"
+
+The service account doesn't have access to the dataset. Grant the BigQuery Data Viewer role.

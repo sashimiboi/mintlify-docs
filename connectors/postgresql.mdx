@@ -1,0 +1,86 @@
+---
+title: "PostgreSQL"
+description: "Connect to PostgreSQL databases"
+---
+
+## Overview
+
+Connect Plumi to PostgreSQL databases, including:
+- Self-hosted PostgreSQL
+- Amazon RDS for PostgreSQL
+- Azure Database for PostgreSQL
+- Google Cloud SQL for PostgreSQL
+- Supabase
+- Neon
+
+## Connection Details
+
+| Field | Description | Example |
+|-------|-------------|---------|
+| Host | Database server address | `db.example.com` |
+| Port | PostgreSQL port (default: 5432) | `5432` |
+| Database | Database name | `myapp_production` |
+| Username | Database user | `plumi_readonly` |
+| Password | User password | `********` |
+| SSL Mode | SSL connection mode | `require` |
+
+## SSL Modes
+
+| Mode | Description |
+|------|-------------|
+| `disable` | No SSL (not recommended) |
+| `require` | SSL required, no certificate verification |
+| `verify-ca` | SSL with CA certificate verification |
+| `verify-full` | SSL with full certificate verification |
+
+## Setting Up a Read-Only User
+
+Create a dedicated read-only user for Plumi:
+
+```sql
+-- Create user
+CREATE USER plumi_readonly WITH PASSWORD 'your_secure_password';
+
+-- Grant connect permission
+GRANT CONNECT ON DATABASE your_database TO plumi_readonly;
+
+-- Grant schema usage
+GRANT USAGE ON SCHEMA public TO plumi_readonly;
+
+-- Grant select on all tables
+GRANT SELECT ON ALL TABLES IN SCHEMA public TO plumi_readonly;
+
+-- Grant select on future tables
+ALTER DEFAULT PRIVILEGES IN SCHEMA public
+GRANT SELECT ON TABLES TO plumi_readonly;
+```
+
+## Cloud Provider Setup
+
+### Amazon RDS
+
+1. Ensure your RDS instance is publicly accessible or use VPC peering
+2. Add Plumi's IP to your security group inbound rules
+3. Use the RDS endpoint as the host
+
+### Azure Database
+
+1. Enable "Allow access to Azure services" or add firewall rules
+2. Use the server name as the host (e.g., `yourserver.postgres.database.azure.com`)
+3. Username format: `username@servername`
+
+### Google Cloud SQL
+
+1. Enable public IP or configure private IP access
+2. Add Plumi's IP to authorized networks
+3. Use the Cloud SQL public IP as the host
+
+## Troubleshooting
+
+### "No pg_hba.conf entry"
+
+Your database isn't configured to accept remote connections. Update `pg_hba.conf` to allow connections from Plumi's IP.
+
+### "SSL connection required"
+
+Enable SSL in your connection settings or ensure your database allows non-SSL connections.

@@ -1,0 +1,78 @@
+---
+title: "Data Connectors Overview"
+description: "Connect Plumi to your databases and data warehouses"
+---
+
+## Supported Databases
+
+Plumi connects to all major databases and data warehouses:
+
+<CardGroup cols={2}>
+  <Card title="PostgreSQL" icon="database" href="/connectors/postgresql">
+    Connect to PostgreSQL databases, including Amazon RDS, Azure Database, and Google Cloud SQL.
+  </Card>
+  <Card title="MySQL" icon="database" href="/connectors/mysql">
+    Connect to MySQL and MariaDB databases, including managed cloud instances.
+  </Card>
+  <Card title="ClickHouse" icon="database" href="/connectors/clickhouse">
+    Connect to ClickHouse for high-performance analytics on large datasets.
+  </Card>
+  <Card title="BigQuery" icon="cloud" href="/connectors/bigquery">
+    Connect to Google BigQuery for serverless data warehouse analytics.
+  </Card>
+  <Card title="Snowflake" icon="snowflake" href="/connectors/snowflake">
+    Connect to Snowflake for cloud data platform analytics.
+  </Card>
+  <Card title="MongoDB" icon="leaf" href="/connectors/mongodb">
+    Connect to MongoDB for document database queries.
+  </Card>
+</CardGroup>
+
+## Adding a Connection
+
+1. Navigate to **Data Connectors** in the sidebar
+2. Click **Add Connection**
+3. Select your database type
+4. Enter connection details
+5. Test the connection
+6. Save
+
+## Connection Security
+
+<Info>
+Plumi uses encrypted connections (SSL/TLS) by default. Your credentials are stored securely and never exposed.
+</Info>
+
+### Best Practices
+
+- **Use read-only credentials** when possible
+- **Restrict IP access** to Plumi's servers
+- **Rotate credentials** regularly
+- **Use service accounts** instead of personal credentials
+
+## Connection Pooling
+
+Plumi manages connection pools automatically:
+- Connections are reused efficiently
+- Idle connections are closed after timeout
+- Failed connections are retried automatically
+
+## Troubleshooting
+
+### Connection Refused
+
+- Verify the host and port are correct
+- Check firewall rules allow connections from Plumi
+- Ensure the database server is running
+
+### Authentication Failed
+
+- Verify username and password
+- Check the user has access to the specified database
+- Ensure the user can connect from remote hosts
+
+### SSL/TLS Errors
+
+- Enable SSL on your database server
+- Provide the correct CA certificate if required
+- Check SSL mode settings

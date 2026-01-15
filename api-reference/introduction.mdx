@@ -1,33 +1,79 @@
 ---
-title: 'Introduction'
-description: 'Example section for showcasing API endpoints'
+title: "API Introduction"
+description: "Integrate Plumi into your applications"
 ---
 
-<Note>
-  If you're not looking to build API reference documentation, you can delete
-  this section by removing the api-reference folder.
-</Note>
+## Overview
 
-## Welcome
+The Plumi API allows you to programmatically:
+- Execute queries on connected databases
+- Manage database connections
+- Access query results
+- Integrate AI-powered data analysis
 
-There are two ways to build API documentation: [OpenAPI](https://mintlify.com/docs/api-playground/openapi/setup) and [MDX components](https://mintlify.com/docs/api-playground/mdx/configuration). For the starter kit, we are using the following OpenAPI specification.
+## Base URL
 
-<Card
-  title="Plant Store Endpoints"
-  icon="leaf"
-  href="https://github.com/mintlify/starter/blob/main/api-reference/openapi.json"
->
-  View the OpenAPI specification file
-</Card>
+All API requests should be made to your workspace URL:
+
+```
+https://your-workspace.plumi.ai/api
+```
 
 ## Authentication
 
-All API endpoints are authenticated using Bearer tokens and picked up from the specification file.
+All API endpoints require authentication using API keys.
+
+```bash
+curl -X GET "https://your-workspace.plumi.ai/api/connections" \
+  -H "Authorization: Bearer YOUR_API_KEY"
+```
+
+See [Authentication](/api-reference/authentication) for details on obtaining and using API keys.
+
+## Response Format
+
+All responses are returned as JSON:
 
 ```json
-"security": [
-  {
-    "bearerAuth": []
+{
+  "success": true,
+  "data": {
+    // Response data
   }
-]
+}
 ```
+
+Error responses include an error message:
+
+```json
+{
+  "success": false,
+  "error": "Error message"
+}
+```
+
+## Rate Limits
+
+API requests are rate limited based on your plan:
+
+| Plan | Requests/minute |
+|------|-----------------|
+| Free | 60 |
+| Professional | 300 |
+| Enterprise | Unlimited |
+
+## Available Endpoints
+
+### Connections
+
+- `GET /api/connections` - List all database connections
+- `POST /api/connections/test` - Test a database connection
+
+### Queries
+
+- `POST /api/query` - Execute a SQL query
+- `GET /api/query/history` - Get query history
+
+### AI
+
+- `POST /api/ai/generate` - Generate SQL from natural language

@@ -1,0 +1,95 @@
+---
+title: "Analytics Engine"
+description: "Build interactive dashboards and visualize your data"
+---
+
+## Overview
+
+The Analytics Engine lets you create interactive dashboards with drag-and-drop widgets. Visualize your data with charts, tables, metrics, and more.
+
+## Dashboard Features
+
+### Widget Types
+
+Create visualizations using various widget types:
+
+- **Line Charts**: Track trends over time
+- **Bar Charts**: Compare categories
+- **Pie Charts**: Show proportions
+- **Area Charts**: Display cumulative values
+- **Scatter Plots**: Analyze correlations
+- **Data Tables**: Show detailed records
+- **Metric Cards**: Display KPIs
+
+### Drag-and-Drop Layout
+
+- Resize widgets to any size
+- Arrange widgets in a flexible grid
+- Create multi-column layouts
+- Save and share dashboards
+
+## Creating a Dashboard
+
+### Step 1: Create New Dashboard
+
+1. Navigate to **Analytics Engine**
+2. Click **New Dashboard**
+3. Give your dashboard a name
+
+### Step 2: Add Widgets
+
+1. Click **Add Widget**
+2. Select your widget type
+3. Write or select a query for the data
+4. Configure chart options
+
+### Step 3: Configure Visualization
+
+Each widget type has specific options:
+
+**Chart Options**:
+- X-axis and Y-axis fields
+- Color schemes
+- Legend position
+- Axis labels and formatting
+
+**Table Options**:
+- Column selection
+- Sorting
+- Pagination
+- Search and filter
+
+### Step 4: Save and Share
+
+- Save your dashboard
+- Share with team members
+- Set refresh intervals for live data
+
+## Query-Powered Widgets
+
+Each widget is powered by a SQL query:
+
+```sql
+-- Revenue by month for line chart
+SELECT
+  DATE_TRUNC('month', order_date) as month,
+  SUM(total) as revenue
+FROM orders
+WHERE order_date >= '2024-01-01'
+GROUP BY month
+ORDER BY month;
+```
+
+## Best Practices
+
+<Tip>
+**Start simple**: Begin with a few key metrics before adding complex visualizations
+</Tip>
+
+<Tip>
+**Use consistent colors**: Maintain a color scheme across related charts
+</Tip>
+
+<Tip>
+**Optimize queries**: Use aggregations and filters to keep dashboards fast
+</Tip>

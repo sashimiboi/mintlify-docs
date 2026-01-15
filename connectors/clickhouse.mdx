@@ -1,0 +1,83 @@
+---
+title: "ClickHouse"
+description: "Connect to ClickHouse for high-performance analytics"
+---
+
+## Overview
+
+Connect Plumi to ClickHouse databases for blazing-fast analytics on large datasets. Supports:
+- Self-hosted ClickHouse
+- ClickHouse Cloud
+- Altinity Cloud
+
+## Connection Details
+
+| Field | Description | Example |
+|-------|-------------|---------|
+| Host | ClickHouse server address | `clickhouse.example.com` |
+| Port | HTTP port (default: 8443 for HTTPS) | `8443` |
+| Database | Database name | `analytics` |
+| Username | Database user | `plumi_readonly` |
+| Password | User password | `********` |
+| SSL | Enable SSL (recommended) | `true` |
+
+## Setting Up a Read-Only User
+
+Create a dedicated read-only user:
+
+```sql
+-- Create user
+CREATE USER plumi_readonly IDENTIFIED BY 'your_secure_password';
+
+-- Grant read access
+GRANT SELECT ON analytics.* TO plumi_readonly;
+```
+
+## ClickHouse Cloud
+
+For ClickHouse Cloud:
+
+1. Go to your ClickHouse Cloud console
+2. Navigate to **Settings > Security**
+3. Add Plumi's IP to the allowed list
+4. Use the provided hostname and credentials
+
+## Best Practices
+
+### Query Optimization
+
+ClickHouse is optimized for analytical queries. For best performance:
+
+- Use aggregations (`GROUP BY`, `SUM`, `COUNT`)
+- Filter by partitioning columns first
+- Avoid `SELECT *` on large tables
+- Use `LIMIT` when exploring data
+
+### Example Queries
+
+```sql
+-- Efficient: Uses aggregation and filtering
+SELECT
+  toDate(timestamp) as date,
+  count() as events
+FROM events
+WHERE timestamp >= today() - 30
+GROUP BY date
+ORDER BY date;
+
+-- Efficient: Uses sampling for exploration
+SELECT *
+FROM large_table
+SAMPLE 0.01  -- 1% sample
+LIMIT 1000;
+```
+
+## Troubleshooting
+
+### Connection Timeout
+
+ClickHouse queries on large datasets can take time. Increase the timeout in your connection settings.
+
+### Memory Limit Exceeded
+
+Your query may be too resource-intensive. Add `LIMIT` or use sampling.

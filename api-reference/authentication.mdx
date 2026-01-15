@@ -1,0 +1,82 @@
+---
+title: "Authentication"
+description: "Authenticate with the Plumi API"
+---
+
+## API Keys
+
+All API requests require an API key for authentication.
+
+## Creating an API Key
+
+1. Go to **Settings > API Keys** in your Plumi workspace
+2. Click **Create API Key**
+3. Give your key a descriptive name
+4. Copy the key (it won't be shown again)
+
+<Warning>
+Store your API key securely. Never commit it to version control or expose it in client-side code.
+</Warning>
+
+## Using Your API Key
+
+Include your API key in the `Authorization` header:
+
+```bash
+curl -X GET "https://your-workspace.plumi.ai/api/connections" \
+  -H "Authorization: Bearer YOUR_API_KEY"
+```
+
+Or as a query parameter (for MCP connections):
+
+```
+https://your-workspace.plumi.ai/sse?api_key=YOUR_API_KEY
+```
+
+## API Key Permissions
+
+API keys inherit the permissions of the user who created them:
+- Read-only users can only execute SELECT queries
+- Admin users have full access
+
+## Revoking API Keys
+
+To revoke an API key:
+1. Go to **Settings > API Keys**
+2. Find the key you want to revoke
+3. Click **Revoke**
+
+<Tip>
+Revoke keys immediately if you suspect they've been compromised.
+</Tip>
+
+## Best Practices
+
+- **Use separate keys** for different integrations
+- **Rotate keys regularly** (at least every 90 days)
+- **Use environment variables** to store keys
+- **Never expose keys** in client-side code or logs
+
+## Error Responses
+
+### 401 Unauthorized
+
+```json
+{
+  "success": false,
+  "error": "Invalid or missing API key"
+}
+```
+
+The API key is missing, invalid, or has been revoked.
+
+### 403 Forbidden
+
+```json
+{
+  "success": false,
+  "error": "Insufficient permissions"
+}
+```
+
+The API key doesn't have permission for this operation.

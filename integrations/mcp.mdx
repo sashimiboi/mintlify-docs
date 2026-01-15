@@ -1,0 +1,138 @@
+---
+title: "MCP Integration"
+description: "Connect Plumi to AI assistants using Model Context Protocol"
+---
+
+## Overview
+
+Model Context Protocol (MCP) allows AI assistants like Claude to interact with Plumi directly. Query your databases, explore schemas, and analyze data through natural conversation.
+
+## What is MCP?
+
+MCP is an open protocol that enables AI assistants to:
+- Execute queries on your connected databases
+- Explore database schemas
+- Access query results and analytics
+- Maintain context across conversations
+
+## Setting Up MCP
+
+### Step 1: Get Your MCP URL
+
+Each Plumi workspace has a unique MCP endpoint:
+
+```
+https://your-workspace.plumi.ai/sse
+```
+
+Or use your API key:
+```
+https://your-workspace.plumi.ai/sse?api_key=YOUR_API_KEY
+```
+
+### Step 2: Configure Your AI Assistant
+
+#### Claude Desktop
+
+Add to your Claude Desktop config (`~/.config/claude/claude_desktop_config.json`):
+
+```json
+{
+  "mcpServers": {
+    "plumi": {
+      "url": "https://your-workspace.plumi.ai/sse?api_key=YOUR_API_KEY"
+    }
+  }
+}
+```
+
+#### Cursor
+
+Add to your Cursor MCP settings:
+
+```json
+{
+  "plumi": {
+    "url": "https://your-workspace.plumi.ai/sse?api_key=YOUR_API_KEY"
+  }
+}
+```
+
+## Available Tools
+
+Once connected, your AI assistant can use these tools:
+
+### `query`
+Execute SQL queries on your connected databases.
+
+**Example prompt**: "Query the orders table to show total revenue by month"
+
+### `list_tables`
+List all tables in a connected database.
+
+**Example prompt**: "What tables are available in my PostgreSQL database?"
+
+### `describe_table`
+Get schema details for a specific table.
+
+**Example prompt**: "Describe the structure of the customers table"
+
+### `list_connections`
+List all configured database connections.
+
+**Example prompt**: "What databases do I have connected?"
+
+## Example Conversations
+
+### Data Exploration
+
+> **You**: What tables are in my analytics database?
+>
+> **Claude**: Let me check your database schema...
+>
+> Your analytics database contains these tables:
+> - `users` (12 columns)
+> - `orders` (8 columns)
+> - `products` (6 columns)
+> - `order_items` (5 columns)
+
+### Running Queries
+
+> **You**: Show me the top 10 customers by total spend
+>
+> **Claude**: I'll query your database for that information...
+>
+> Here are your top 10 customers by total spend:
+> | Customer | Total Spend |
+> |----------|-------------|
+> | Acme Corp | $125,000 |
+> | ... | ... |
+
+## Security
+
+### API Key Management
+
+- Generate API keys in **Settings > API Keys**
+- Use separate keys for different integrations
+- Rotate keys regularly
+- Revoke keys immediately if compromised
+
+### Permissions
+
+MCP connections respect your database permissions:
+- Read-only database users can only query data
+- No write operations are exposed through MCP
+
+## Troubleshooting
+
+### Connection Failed
+
+- Verify your API key is valid
+- Check your workspace URL is correct
+- Ensure your Plumi workspace is running
+
+### No Tools Available
+
+- Restart your AI assistant after config changes
+- Verify the MCP config JSON is valid
+- Check for typos in the URL

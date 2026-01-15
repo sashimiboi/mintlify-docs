@@ -1,0 +1,99 @@
+---
+title: "Snowflake"
+description: "Connect to Snowflake cloud data platform"
+---
+
+## Overview
+
+Connect Plumi to Snowflake for cloud data platform analytics with automatic scaling and near-unlimited concurrency.
+
+## Connection Details
+
+| Field | Description | Example |
+|-------|-------------|---------|
+| Account | Snowflake account identifier | `xy12345.us-east-1` |
+| Warehouse | Virtual warehouse name | `COMPUTE_WH` |
+| Database | Database name | `ANALYTICS` |
+| Schema | Schema name (optional) | `PUBLIC` |
+| Username | Snowflake user | `PLUMI_USER` |
+| Password | User password | `********` |
+
+## Account Identifier
+
+Your account identifier includes:
+- Account name
+- Region (if not in US West)
+- Cloud provider (if not AWS)
+
+Examples:
+- `xy12345` (US West on AWS)
+- `xy12345.us-east-1` (US East on AWS)
+- `xy12345.us-east-1.azure` (US East on Azure)
+
+## Setting Up a Read-Only User
+
+Create a dedicated read-only user:
+
+```sql
+-- Create role
+CREATE ROLE PLUMI_READONLY;
+
+-- Grant warehouse usage
+GRANT USAGE ON WAREHOUSE COMPUTE_WH TO ROLE PLUMI_READONLY;
+
+-- Grant database access
+GRANT USAGE ON DATABASE ANALYTICS TO ROLE PLUMI_READONLY;
+GRANT USAGE ON ALL SCHEMAS IN DATABASE ANALYTICS TO ROLE PLUMI_READONLY;
+GRANT SELECT ON ALL TABLES IN DATABASE ANALYTICS TO ROLE PLUMI_READONLY;
+
+-- Grant future table access
+GRANT SELECT ON FUTURE TABLES IN DATABASE ANALYTICS TO ROLE PLUMI_READONLY;
+
+-- Create user
+CREATE USER PLUMI_USER
+  PASSWORD = 'your_secure_password'
+  DEFAULT_ROLE = PLUMI_READONLY
+  DEFAULT_WAREHOUSE = COMPUTE_WH;
+
+-- Assign role to user
+GRANT ROLE PLUMI_READONLY TO USER PLUMI_USER;
+```
+
+## Query Syntax
+
+Snowflake uses ANSI SQL with extensions:
+
+```sql
+-- Date functions
+SELECT
+  DATE_TRUNC('month', order_date) as month,
+  SUM(total) as revenue
+FROM orders
+WHERE order_date >= '2024-01-01'
+GROUP BY month;
+
+-- Semi-structured data (JSON)
+SELECT
+  data:customer:name::string as customer_name,
+  data:order:total::number as total
+FROM orders_json;
+```
+
+## Cost Optimization
+
+Snowflake charges by compute time. To minimize costs:
+
+- Use appropriate warehouse sizes
+- Suspend warehouses when not in use
+- Use result caching (automatic for repeated queries)
+- Cluster tables on frequently filtered columns
+
+## Troubleshooting
+
+### "Account not found"
+
+Verify your account identifier includes the correct region and cloud provider.
+
+### "Warehouse suspended"
+
+The warehouse may be suspended. Plumi will attempt to resume it, but ensure the user has `OPERATE` privilege on the warehouse.

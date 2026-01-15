@@ -1,0 +1,95 @@
+---
+title: "MongoDB"
+description: "Connect to MongoDB document databases"
+---
+
+## Overview
+
+Connect Plumi to MongoDB databases, including:
+- Self-hosted MongoDB
+- MongoDB Atlas
+- Amazon DocumentDB
+
+## Connection Details
+
+| Field | Description | Example |
+|-------|-------------|---------|
+| Connection String | MongoDB URI | `mongodb+srv://...` |
+| Database | Database name | `myapp` |
+
+## Connection String Format
+
+### Standard Format
+```
+mongodb://username:password@host:port/database
+```
+
+### MongoDB Atlas (SRV)
+```
+mongodb+srv://username:password@cluster.mongodb.net/database
+```
+
+## MongoDB Atlas Setup
+
+1. Go to your MongoDB Atlas cluster
+2. Click **Connect**
+3. Select **Connect your application**
+4. Copy the connection string
+5. Replace `<password>` with your password
+
+### Network Access
+
+Add Plumi's IP to your Atlas IP Access List:
+1. Go to **Network Access**
+2. Click **Add IP Address**
+3. Add Plumi's IP or allow access from anywhere (for testing only)
+
+## Querying MongoDB
+
+Plumi translates SQL-like queries to MongoDB aggregation pipelines:
+
+```sql
+-- Find documents
+SELECT * FROM users WHERE age > 21 LIMIT 10;
+
+-- Aggregation
+SELECT city, COUNT(*) as count
+FROM users
+GROUP BY city
+ORDER BY count DESC;
+```
+
+### Supported Operations
+
+| SQL | MongoDB Equivalent |
+|-----|-------------------|
+| `SELECT` | `$project` |
+| `WHERE` | `$match` |
+| `GROUP BY` | `$group` |
+| `ORDER BY` | `$sort` |
+| `LIMIT` | `$limit` |
+| `JOIN` | `$lookup` |
+
+## Best Practices
+
+<Tip>
+**Create indexes**: Ensure your MongoDB collections have indexes on frequently queried fields.
+</Tip>
+
+<Tip>
+**Use projections**: Select only the fields you need to reduce data transfer.
+</Tip>
+
+## Troubleshooting
+
+### "Authentication failed"
+
+- Verify username and password in the connection string
+- Ensure the user exists in the correct database
+- Check the authentication database (usually `admin`)
+
+### "Connection timed out"
+
+- Verify network connectivity to MongoDB
+- Check Atlas IP access list includes Plumi's IP
+- Ensure the MongoDB instance is running

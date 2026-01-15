@@ -1,0 +1,91 @@
+---
+title: "AI Engine"
+description: "Transform natural language into SQL queries with AI"
+---
+
+## Overview
+
+The AI Engine lets you ask questions about your data in plain English. Plumi's AI understands your database schema and generates accurate SQL queries automatically.
+
+## How It Works
+
+1. **Schema Understanding**: The AI learns your database structure, including tables, columns, relationships, and data types.
+
+2. **Natural Language Processing**: Type your question in plain English, and the AI interprets your intent.
+
+3. **SQL Generation**: The AI generates optimized SQL that answers your question.
+
+4. **Execution & Results**: Execute the query and view results instantly.
+
+## Supported AI Models
+
+Plumi supports multiple AI providers:
+
+| Provider | Models |
+|----------|--------|
+| Anthropic | Claude 3.5 Sonnet, Claude 3 Opus |
+| OpenAI | GPT-4, GPT-4 Turbo |
+| Google | Gemini Pro |
+| Mistral | Mistral Large |
+
+Configure your preferred model in **Settings > AI Models**.
+
+## Example Queries
+
+### Simple Questions
+
+> "How many orders did we get last month?"
+
+```sql
+SELECT COUNT(*) as order_count
+FROM orders
+WHERE order_date >= DATE_TRUNC('month', CURRENT_DATE - INTERVAL '1 month')
+  AND order_date < DATE_TRUNC('month', CURRENT_DATE);
+```
+
+### Complex Analysis
+
+> "Show me the top 5 products by revenue, broken down by month for Q4 2024"
+
+```sql
+SELECT
+  DATE_TRUNC('month', o.order_date) as month,
+  p.product_name,
+  SUM(oi.quantity * oi.unit_price) as revenue
+FROM order_items oi
+JOIN orders o ON oi.order_id = o.id
+JOIN products p ON oi.product_id = p.id
+WHERE o.order_date >= '2024-10-01' AND o.order_date < '2025-01-01'
+GROUP BY DATE_TRUNC('month', o.order_date), p.product_name
+ORDER BY month, revenue DESC;
+```
+
+## Best Practices
+
+<Tip>
+**Be specific**: Instead of "show me sales", try "show me total sales by region for the last 30 days"
+</Tip>
+
+<Tip>
+**Reference tables**: If you know the table name, mention it: "from the orders table, show me..."
+</Tip>
+
+<Tip>
+**Review generated SQL**: Always review the generated query before running it on production data
+</Tip>
+
+## Configuring AI Models
+
+### Adding API Keys
+
+1. Go to **Settings > API Keys**
+2. Add your API key for your preferred provider
+3. Select the model in **Settings > AI Models**
+
+### Model Selection
+
+Choose models based on your needs:
+- **Claude**: Best for complex analytical queries
+- **GPT-4**: Great general-purpose model
+- **Gemini**: Fast and cost-effective
+- **Mistral**: Good balance of speed and quality
