@@ -1,0 +1,480 @@
+---
+title: "Tool Examples"
+description: "Step-by-step examples for building SQL and Python tools in MCP Studio"
+---
+
+## Overview
+
+This guide provides detailed examples of building custom tools in Plumi's MCP Studio. You'll learn how to create SQL query tools with dynamic parameters and Python tools for advanced data processing.
+
+## SQL Tool Examples
+
+SQL tools execute queries against your connected databases with support for dynamic parameters and conditional logic.
+
+### Example 1: Customer Lookup Tool
+
+A simple tool to look up customer information by ID or email.
+
+<Steps>
+  <Step title="Create the Tool">
+    Go to **MCP Studio > Tool Builder** and click **New Tool**.
+  </Step>
+  <Step title="Configure Basic Settings">
+    - **Name**: `lookup_customer`
+    - **Description**: `Look up customer information by ID or email address. Returns customer profile, account status, and recent activity.`
+    - **Category**: `Customer Data`
+  </Step>
+  <Step title="Define Parameters">
+    Add two parameters:
+
+    | Name | Type | Required | Description |
+    |------|------|----------|-------------|
+    | `customer_id` | string | No | The unique customer identifier |
+    | `email` | string | No | Customer email address |
+  </Step>
+  <Step title="Write the SQL Template">
+    ```sql
+    SELECT
+      c.id,
+      c.email,
+      c.full_name,
+      c.account_status,
+      c.created_at,
+      c.last_login_at,
+      COUNT(o.id) as total_orders
+    FROM customers c
+    LEFT JOIN orders o ON o.customer_id = c.id
+    WHERE 1=1
+      {{#if customer_id}}AND c.id = '{{customer_id}}'{{/if}}
+      {{#if email}}AND c.email = '{{email}}'{{/if}}
+    GROUP BY c.id, c.email, c.full_name, c.account_status, c.created_at, c.last_login_at
+    LIMIT 10
+    ```
+  </Step>
+</Steps>
+
+<Info>
+The `{{#if parameter}}...{{/if}}` syntax creates conditional blocks. The SQL inside only executes if the parameter has a value.
+</Info>
+
+### Example 2: Transaction Analysis Tool
+
+A more advanced tool for analyzing transactions with multiple filters.
+
+```yaml
+name: analyze_transactions
+description: |
+  Analyze transactions with flexible filtering by date range,
+  amount thresholds, and status. Use this to investigate
+  suspicious activity or generate transaction reports.
+parameters:
+  - name: start_date
+    type: string
+    required: true
+    description: Start date (YYYY-MM-DD format)
+  - name: end_date
+    type: string
+    required: true
+    description: End date (YYYY-MM-DD format)
+  - name: min_amount
+    type: number
+    required: false
+    description: Minimum transaction amount to include
+  - name: max_amount
+    type: number
+    required: false
+    description: Maximum transaction amount to include
+  - name: status
+    type: string
+    required: false
+    description: Filter by status (pending, completed, failed, flagged)
+```
+
+**SQL Template:**
+
+```sql
+SELECT
+  t.id,
+  t.created_at,
+  t.amount,
+  t.currency,
+  t.status,
+  t.risk_score,
+  c.email as customer_email,
+  c.full_name as customer_name
+FROM transactions t
+JOIN customers c ON c.id = t.customer_id
+WHERE t.created_at BETWEEN '{{start_date}}' AND '{{end_date}}'
+  {{#if min_amount}}AND t.amount >= {{min_amount}}{{/if}}
+  {{#if max_amount}}AND t.amount <= {{max_amount}}{{/if}}
+  {{#if status}}AND t.status = '{{status}}'{{/if}}
+ORDER BY t.created_at DESC
+LIMIT 1000
+```
+
+### Example 3: Risk Score Calculator
+
+A tool that calculates aggregate risk metrics for a customer.
+
+```yaml
+name: calculate_risk_score
+description: |
+  Calculate comprehensive risk metrics for a customer including
+  transaction velocity, average amounts, and flagged activity count.
+  Returns risk indicators useful for compliance review.
+parameters:
+  - name: customer_id
+    type: string
+    required: true
+    description: Customer ID to analyze
+  - name: days_back
+    type: number
+    required: false
+    description: Number of days to analyze (default 30)
+```
+
+**SQL Template:**
+
+```sql
+WITH customer_stats AS (
+  SELECT
+    customer_id,
+    COUNT(*) as transaction_count,
+    SUM(amount) as total_volume,
+    AVG(amount) as avg_transaction,
+    MAX(amount) as max_transaction,
+    COUNT(CASE WHEN status = 'flagged' THEN 1 END) as flagged_count,
+    COUNT(CASE WHEN risk_score > 0.7 THEN 1 END) as high_risk_count
+  FROM transactions
+  WHERE customer_id = '{{customer_id}}'
+    AND created_at >= CURRENT_DATE - INTERVAL '{{days_back}} days'
+  GROUP BY customer_id
+)
+SELECT
+  cs.*,
+  c.account_status,
+  c.kyc_verified,
+  c.created_at as account_age,
+  CASE
+    WHEN cs.flagged_count > 5 THEN 'HIGH'
+    WHEN cs.flagged_count > 2 THEN 'MEDIUM'
+    ELSE 'LOW'
+  END as risk_level
+FROM customer_stats cs
+JOIN customers c ON c.id = cs.customer_id
+```
+
+<Tip>
+Use CTEs (Common Table Expressions) to break complex queries into readable parts. The AI assistant will better understand and explain the results.
+</Tip>
+
+---
+
+## Python Tool Examples
+
+Python tools allow you to execute custom code with access to parameters, external APIs, and your connected databases.
+
+### Example 1: API Data Fetcher
+
+A tool that fetches data from an external API and processes it.
+
+<Steps>
+  <Step title="Create the Tool">
+    Go to **MCP Studio > Tool Builder**, click **New Tool**, and select **Python** as the tool type.
+  </Step>
+  <Step title="Configure Basic Settings">
+    - **Name**: `fetch_exchange_rates`
+    - **Description**: `Fetch current exchange rates for a base currency. Returns rates for major currencies (USD, EUR, GBP, etc.).`
+  </Step>
+  <Step title="Define Parameters">
+    | Name | Type | Required | Description |
+    |------|------|----------|-------------|
+    | `base_currency` | string | Yes | Base currency code (e.g., USD, EUR) |
+    | `target_currencies` | string | No | Comma-separated target currencies |
+  </Step>
+  <Step title="Write the Python Code">
+    ```python
+    import requests
+
+    # Parameters are automatically available as variables
+    base = base_currency.upper()
+    targets = target_currencies.split(',') if target_currencies else ['USD', 'EUR', 'GBP', 'JPY']
+
+    # Fetch exchange rates from API
+    response = requests.get(
+        f'https://api.exchangerate-api.com/v4/latest/{base}'
+    )
+    data = response.json()
+
+    # Filter to requested currencies
+    rates = {
+        currency: data['rates'].get(currency.strip().upper())
+        for currency in targets
+        if data['rates'].get(currency.strip().upper())
+    }
+
+    return {
+        'base': base,
+        'rates': rates,
+        'updated': data.get('date')
+    }
+    ```
+  </Step>
+</Steps>
+
+### Example 2: Data Aggregation with Pandas
+
+A tool that queries your database and performs pandas analysis.
+
+```yaml
+name: customer_cohort_analysis
+description: |
+  Perform cohort analysis on customers by signup month.
+  Returns retention rates and lifetime value by cohort.
+parameters:
+  - name: start_month
+    type: string
+    required: true
+    description: Start month (YYYY-MM format)
+  - name: end_month
+    type: string
+    required: true
+    description: End month (YYYY-MM format)
+```
+
+**Python Code:**
+
+```python
+import pandas as pd
+from datetime import datetime
+
+# connector is automatically available for database queries
+query = f"""
+SELECT
+  DATE_TRUNC('month', c.created_at) as cohort_month,
+  DATE_TRUNC('month', t.created_at) as activity_month,
+  COUNT(DISTINCT c.id) as customers,
+  SUM(t.amount) as revenue
+FROM customers c
+LEFT JOIN transactions t ON t.customer_id = c.id
+WHERE c.created_at >= '{start_month}-01'
+  AND c.created_at < '{end_month}-01'
+GROUP BY 1, 2
+ORDER BY 1, 2
+"""
+
+# Execute query using the connector
+result = connector.execute(query)
+df = pd.DataFrame(result['data'], columns=result['columns'])
+
+# Calculate cohort metrics
+df['cohort_month'] = pd.to_datetime(df['cohort_month'])
+df['activity_month'] = pd.to_datetime(df['activity_month'])
+df['months_since_signup'] = ((df['activity_month'] - df['cohort_month']).dt.days / 30).astype(int)
+
+# Pivot to cohort matrix
+cohort_pivot = df.pivot_table(
+    index='cohort_month',
+    columns='months_since_signup',
+    values='customers',
+    aggfunc='sum'
+)
+
+# Calculate retention rates
+retention = cohort_pivot.div(cohort_pivot[0], axis=0) * 100
+
+return {
+    'cohorts': cohort_pivot.to_dict(),
+    'retention_rates': retention.round(2).to_dict(),
+    'summary': {
+        'total_cohorts': len(cohort_pivot),
+        'avg_month_1_retention': retention[1].mean().round(2) if 1 in retention else None
+    }
+}
+```
+
+### Example 3: Alert Generator
+
+A Python tool that analyzes data and generates alerts.
+
+```yaml
+name: generate_risk_alerts
+description: |
+  Scan recent transactions for risk patterns and generate alerts.
+  Checks for velocity spikes, unusual amounts, and geographic anomalies.
+parameters:
+  - name: hours_back
+    type: number
+    required: false
+    description: Hours to look back (default 24)
+  - name: risk_threshold
+    type: number
+    required: false
+    description: Minimum risk score to alert on (default 0.7)
+```
+
+**Python Code:**
+
+```python
+import pandas as pd
+from datetime import datetime, timedelta
+
+hours = hours_back or 24
+threshold = risk_threshold or 0.7
+
+# Query recent high-risk transactions
+query = f"""
+SELECT
+  t.id,
+  t.customer_id,
+  t.amount,
+  t.risk_score,
+  t.created_at,
+  t.ip_country,
+  c.email,
+  c.usual_country
+FROM transactions t
+JOIN customers c ON c.id = t.customer_id
+WHERE t.created_at >= NOW() - INTERVAL '{hours} hours'
+  AND t.risk_score >= {threshold}
+ORDER BY t.risk_score DESC
+"""
+
+result = connector.execute(query)
+df = pd.DataFrame(result['data'], columns=result['columns'])
+
+alerts = []
+
+for _, row in df.iterrows():
+    alert = {
+        'transaction_id': row['id'],
+        'customer_email': row['email'],
+        'amount': float(row['amount']),
+        'risk_score': float(row['risk_score']),
+        'reasons': []
+    }
+
+    # Check for geographic anomaly
+    if row['ip_country'] != row['usual_country']:
+        alert['reasons'].append(f"Geographic anomaly: {row['ip_country']} vs usual {row['usual_country']}")
+
+    # Check for high amount
+    if row['amount'] > 10000:
+        alert['reasons'].append(f"High value transaction: ${row['amount']:,.2f}")
+
+    # Check for very high risk
+    if row['risk_score'] > 0.9:
+        alert['reasons'].append("Critical risk score")
+
+    alerts.append(alert)
+
+return {
+    'alert_count': len(alerts),
+    'alerts': alerts[:50],  # Limit to top 50
+    'scan_period_hours': hours,
+    'threshold_used': threshold
+}
+```
+
+---
+
+## Parameter Types Reference
+
+| Type | Description | Example Values |
+|------|-------------|----------------|
+| `string` | Text input | `"customer_123"`, `"2024-01-15"` |
+| `number` | Numeric input (integer or decimal) | `100`, `99.95` |
+| `boolean` | True/false flag | `true`, `false` |
+
+---
+
+## SQL Template Syntax
+
+### Basic Parameter Substitution
+
+```sql
+SELECT * FROM users WHERE id = '{{user_id}}'
+```
+
+### Conditional Blocks
+
+Include SQL only when a parameter has a value:
+
+```sql
+SELECT * FROM orders
+WHERE 1=1
+  {{#if customer_id}}AND customer_id = '{{customer_id}}'{{/if}}
+  {{#if status}}AND status = '{{status}}'{{/if}}
+```
+
+### Default Values
+
+Set defaults in your parameter definition:
+
+```yaml
+parameters:
+  - name: limit
+    type: number
+    default: 100
+    description: Maximum rows to return
+```
+
+---
+
+## Python Tool Capabilities
+
+### Available Packages
+
+Python tools have access to these pre-installed packages:
+
+- `requests` - HTTP requests to external APIs
+- `pandas` - Data manipulation and analysis
+- `numpy` - Numerical computing
+- `json` - JSON parsing
+- `datetime` - Date/time operations
+
+### Built-in Variables
+
+| Variable | Description |
+|----------|-------------|
+| `connector` | Database connector for executing queries |
+| Parameter names | All defined parameters are available as variables |
+
+### Returning Results
+
+Always return a dictionary or list:
+
+```python
+# Good - returns structured data
+return {
+    'status': 'success',
+    'data': results,
+    'count': len(results)
+}
+
+# Also good - returns a list
+return [{'id': 1, 'name': 'Item 1'}, {'id': 2, 'name': 'Item 2'}]
+```
+
+---
+
+## Best Practices
+
+<CardGroup cols={2}>
+  <Card title="Write Clear Descriptions" icon="pen">
+    AI assistants use your tool description to decide when to use it. Be specific about what the tool does and what data it returns.
+  </Card>
+  <Card title="Validate Inputs" icon="shield">
+    Use parameter types and required flags. For SQL tools, the template syntax prevents injection attacks.
+  </Card>
+  <Card title="Handle Edge Cases" icon="code">
+    Consider what happens with empty results, null values, or invalid parameters. Return helpful messages.
+  </Card>
+  <Card title="Test Thoroughly" icon="flask">
+    Use the Testing Playground to verify your tool works with various inputs before deploying.
+  </Card>
+</CardGroup>
+
+<Warning>
+**Security Note**: Never hardcode credentials in your tools. Use environment variables or Plumi's secure credential storage for API keys and secrets.
+</Warning>

@@ -27,6 +27,7 @@
               "features/ai-engine",
               "features/analytics",
               "features/mcp-studio",
+              "features/tool-examples",
               "features/governance"
             ]
           },
