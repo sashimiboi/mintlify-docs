@@ -37,6 +37,52 @@ Plumi connects to all major databases and data warehouses:
 5. Test the connection
 6. Save
 
+## Connecting Local Databases
+
+Have a database running on your local machine or private network? Use [ngrok](https://ngrok.com) to create a secure tunnel that Plumi can connect to.
+
+<Steps>
+  <Step title="Install ngrok">
+    Download and install ngrok from [ngrok.com/download](https://ngrok.com/download)
+  </Step>
+  <Step title="Start the tunnel">
+    Run ngrok to expose your local database port:
+    ```bash
+    # For PostgreSQL (default port 5432)
+    ngrok tcp 5432
+
+    # For MySQL (default port 3306)
+    ngrok tcp 3306
+
+    # For MongoDB (default port 27017)
+    ngrok tcp 27017
+    ```
+  </Step>
+  <Step title="Copy the forwarding URL">
+    ngrok will display a URL like:
+    ```
+    Forwarding  tcp://0.tcp.ngrok.io:12345 -> localhost:5432
+    ```
+  </Step>
+  <Step title="Add the connection in Plumi">
+    In **Data Connectors**, enter:
+    - **Host**: `0.tcp.ngrok.io`
+    - **Port**: `12345` (the port from ngrok)
+    - **Database**: your database name
+    - **Username/Password**: your database credentials
+  </Step>
+</Steps>
+
+<Tip>
+This is the easiest way to connect local or private databases to Plumi without configuring firewalls or VPNs.
+</Tip>
+
+<Warning>
+Free ngrok URLs change each time you restart. For a persistent URL, consider [ngrok's paid plans](https://ngrok.com/pricing) or use a cloud-hosted database.
+</Warning>
+
+---
+
 ## Connection Security
 
 <Info>
